@@ -145,7 +145,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 
 		setVariables("USER_KEY", "USER_PASSWORD")
 		response := PullFundsTransactionsPost(request)
-		fmt.Println(response)
+		fmt.Printf("%+v", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.FundsTransactionResponse" {
 			t.Errorf("Return should be of type FundsTransactionResponse. Looking for %s, got %s", "visa.FundsTransactionResponse", reflect.TypeOf(response).String())

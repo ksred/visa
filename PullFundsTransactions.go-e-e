@@ -2,10 +2,11 @@ package visa
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 )
 
-var PULL_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pullfundstransactions"
+var PULL_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pullfundstransactions/"
 
 type FundsTransactionRequest struct {
 	SystemsTraceAuditNumber       int                       `json:"systemsTraceAuditNumber"`                 // required, 6
@@ -99,8 +100,30 @@ func PullFundsTransactionsPost(request FundsTransactionRequest) (response FundsT
 	responseJson := Client(USER_ID, USER_PASSWORD, PULL_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
 	// Unmarshall response
 	err = json.Unmarshal(responseJson, &response)
+	if err != nil {
+		log.Fatalf("Error json decoding PullFundsTransactionsPost response: %v", err)
+		return
+	}
 	return
 }
 
-func PullFundsTransactionsGet() {
+// PullFundsTransactions (GET) gets the status and details for a specific PullFundsTransactions request
+// if there was a timeout or connection issue on the initial request
+func PullFundsTransactionsGet(statusIdentifier string) (response FundsTransactionResponse) {
+	/*
+	   Get the status and details for a specific PullFundsTransactions POST request if there was a timeout or connection issue on the initial request
+	   The PullFundsTransactions GET operation can be invoked when the initial PullFundsTransactions POST request has returned a timeout error.
+	   When a timeout occurs, the response will include the appropriate PullFundsTransactions link header which the client then uses to get the
+	   status and details of the initial request.
+	*/
+	requestUrl := PULL_FUNDS_TRANSACTIONS_URL + statusIdentifier
+	fmt.Printf("URL: %s\n", requestUrl)
+	responseJson := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	// Unmarshall response
+	err := json.Unmarshal(responseJson, &response)
+	if err != nil {
+		log.Fatalf("Error json decoding PullFundsTransactionsGet response: %v", err)
+		return
+	}
+	return
 }

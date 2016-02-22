@@ -6,6 +6,9 @@ import (
 	"testing"
 )
 
+const TEST_USER_KEY = ""
+const TEST_USER_PASSWORD = ""
+
 func TestPullFundsTransactionPost(t *testing.T) {
 	cases := []struct {
 		systemsTraceAuditNumber        int
@@ -43,7 +46,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 	}{
 		//{},
 		{
-			300259,
+			123456,
 			"407509300259",
 			"2016-02-21T16:22:13",
 			409999,
@@ -143,12 +146,35 @@ func TestPullFundsTransactionPost(t *testing.T) {
 			FeeProgramIndicator: c.feeProgramIndicator,
 		}
 
-		setVariables("USER_KEY", "USER_PASSWORD")
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		response := PullFundsTransactionsPost(request)
-		fmt.Printf("%+v", response)
+		fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.FundsTransactionResponse" {
 			t.Errorf("Return should be of type FundsTransactionResponse. Looking for %s, got %s", "visa.FundsTransactionResponse", reflect.TypeOf(response).String())
 		}
 	}
 }
+
+/*
+@FIXME: Currently receiving a 404. Suspect this might have to do with the transaction not being found, as opposed to the path
+func TestPullFundsTransactionGet(t *testing.T) {
+	cases := []struct {
+		statusIdentifier string
+	}{
+		{
+			"381228649430011",
+		},
+	}
+
+	for _, c := range cases {
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response := PullFundsTransactionsGet(c.statusIdentifier)
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.FundsTransactionResponse" {
+			t.Errorf("Return should be of type FundsTransactionResponse. Looking for %s, got %s", "visa.FundsTransactionResponse", reflect.TypeOf(response).String())
+		}
+	}
+}
+*/

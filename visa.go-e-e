@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -54,11 +55,12 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	setVariables(userId, userPassword)
 	authHeader := createAuthHeader()
 
+	//fmt.Printf("Body: %v\n", bytes.NewBuffer(body))
 	req, err := http.NewRequest(reqType, url, bytes.NewBuffer(body))
 	req.Header.Set("X-Client-Transaction-ID", transactionID)
 	req.Header.Set("Authorization:Basic ", authHeader)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept", "application/json,application/octet-stream")
 
 	// Load client cert
 	cert, err := tls.LoadX509KeyPair(SSL_PUBLIC_KEY_PATH, SSL_PRIVATE_KEY_PATH)
@@ -90,10 +92,12 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Fatalf("HTTP call failed: %s\n%s\nTLS: %b", resp.Status, resp.Header, resp.TLS.HandshakeComplete)
+		log.Fatalf("HTTP call failed: %v\n", resp.Status)
+		//log.Fatalf("HTTP call failed: %s\nTLS: %b", resp.Header, resp.TLS.HandshakeComplete)
 	}
 
 	response, _ = ioutil.ReadAll(resp.Body)
+	fmt.Printf("Response: %v\n", string(response))
 	return
 }
 

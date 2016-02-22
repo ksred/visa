@@ -41,7 +41,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 		PDSRCIzoneKeyIndex             int
 		feeProgramIndicator            string
 	}{
-		{},
+		//{},
 		{
 			300259,
 			"407509300259",
@@ -143,7 +143,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 			FeeProgramIndicator: c.feeProgramIndicator,
 		}
 
-		setVariables("USER_ID", "USER_PASSWORD")
+		setVariables("USER_KEY", "USER_PASSWORD")
 		response := PullFundsTransactionsPost(request)
 		fmt.Println(response)
 		// 1. Check type

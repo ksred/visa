@@ -3,7 +3,9 @@ package visa
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -65,19 +67,17 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 		log.Fatalf("Could not load key pair: %v", err)
 	}
 	// Load CA cert
-	/*
-		caCert, err := ioutil.ReadFile(SSL_CAPRIVATE_KEY_PATH)
-		if err != nil {
-			log.Fatalf("Could not load CA key: %v", err)
-		}
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(caCert)
-	*/
+	caCert, err := ioutil.ReadFile(SSL_CAPRIVATE_KEY_PATH)
+	if err != nil {
+		log.Fatalf("Could not load CA key: %v", err)
+	}
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(caCert)
 
 	// Setup HTTPS client
 	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-		//RootCAs:            caCertPool,
+		Certificates:       []tls.Certificate{cert},
+		RootCAs:            caCertPool,
 		InsecureSkipVerify: true, //@FIXME: This call *must* be secure
 	}
 	tlsConfig.BuildNameToCertificate()
@@ -90,7 +90,15 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		log.Fatalf("HTTP call failed: %s\n%s\nTLS: %b", resp.Status, resp.Header, resp.TLS.HandshakeComplete)
+	}
+
+	fmt.Println(resp.Status)
+	fmt.Println(resp.Header)
+	fmt.Println(resp.TLS)
 	response, _ = ioutil.ReadAll(resp.Body)
+	fmt.Println(string(response))
 
 	return
 }

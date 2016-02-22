@@ -91,7 +91,6 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	defer resp.Body.Close()
 
 	response, _ = ioutil.ReadAll(resp.Body)
-	//fmt.Println(response)
 
 	return
 }

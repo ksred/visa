@@ -1,12 +1,9 @@
 package visa
 
-import (
-	"encoding/json"
-	"fmt"
-	"log"
-)
+import "encoding/json"
 
 var PULL_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pullfundstransactions/"
+var PULL_MULTI_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/multipullfundstransactions/"
 
 type FundsTransactionRequest struct {
 	SystemsTraceAuditNumber       int                       `json:"systemsTraceAuditNumber"`                 // required, 6
@@ -29,6 +26,34 @@ type FundsTransactionRequest struct {
 	PointOfServiceCapability      *PointOfServiceCapability `json:"pointOfServiceCapability,omitempty"`      // Conditional: Object
 	PinData                       *PinData                  `json:"pinData,omitempty"`                       // Conditional: Object
 	FeeProgramIndicator           string                    `json:"feeProgramIndicator,omitempty"`           // Optional: string | Length:3
+}
+
+type FundsTransactionRequestMulti struct {
+	LocalTransactionDateTime string                             `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	AcquiringBin             int                                `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
+	AcquirerCountryCode      int                                `json:"acquirerCountryCode"`            // integer | Length: 3
+	BusinessApplicationId    string                             `json:"businessApplicationId"`          // string | Length: 2
+	MerchantCategoryCode     int                                `json:"merchantCategoryCode,omitempty"` // Conditional: integer | Length: total 4 digits
+	Request                  []FundsTransactionRequestMultiData `json:"request"`
+	FeeProgramIndicator      string                             `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
+}
+
+type FundsTransactionRequestMultiData struct {
+	LocalTransactionDateTime      string                    `json:"localTransactionDateTime"`                // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	SystemsTraceAuditNumber       int                       `json:"systemsTraceAuditNumber"`                 // required, 6
+	RetrievalReferenceNumber      string                    `json:"retrievalReferenceNumber"`                // ydddhhnnnnnn(numeric characters only), Length: 12
+	SenderPrimaryAccountNumber    string                    `json:"senderPrimaryAccountNumber"`              // string | Length: 13 - 19
+	SenderCardExpiryDate          string                    `json:"senderCardExpiryDate"`                    // string | YYYY-MM
+	SenderCurrencyCode            string                    `json:"senderCurrencyCode"`                      // string | Length: 3
+	Amount                        float64                   `json:"amount,omitempty"`                        // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
+	Surcharge                     float64                   `json:"surcharge,omitempty"`                     // Optional: decimal | Length: totalDigits 12, fractionDigits 3(minimum value is 0)
+	Cavv                          string                    `json:"cavv"`                                    // string | Length:40
+	ForeignExchangeFeeTransaction float64                   `json:"foreignExchangeFeeTransaction,omitempty"` // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
+	CardAcceptor                  CardAcceptor              `json:"cardAcceptor"`                            // Object
+	MagneticStripeData            *MagneticStripeData       `json:"magneticStripeData,omitempty"`            // Optional: Object
+	PointOfServiceData            *PointOfServiceData       `json:"pointOfServiceData,omitempty"`            // Conditional: Object
+	PointOfServiceCapability      *PointOfServiceCapability `json:"pointOfServiceCapability,omitempty"`      // Conditional: Object
+	PinData                       *PinData                  `json:"pinData,omitempty"`                       // Conditional: Object
 }
 
 type CardAcceptor struct {
@@ -85,7 +110,7 @@ type FundsTransactionResponse struct {
 
 // PullFundsTransactions (POST) Resource debits (pulls) funds from a sender's Visa account (in preparation for pushing funds to a recipient's account)
 // by initiating a financial message called an Account Funding Transaction (AFT)
-func PullFundsTransactionsPost(request FundsTransactionRequest) (response FundsTransactionResponse) {
+func PullFundsTransactionsPost(request FundsTransactionRequest) (response FundsTransactionResponse, err error) {
 	/*
 	   You should log or otherwise retain all the information returned in the PullFundsTransactions response.
 	   Should it be necessary to initiate a ReverseFundsTransactions POST operation, you may need to provide
@@ -93,23 +118,23 @@ func PullFundsTransactionsPost(request FundsTransactionRequest) (response FundsT
 	*/
 	body, err := json.Marshal(request)
 	if err != nil {
-		// @TODO: No not fatal log
-		log.Fatalf("Error json encoding PullFundsTransactionsPost request: %v", err)
-		return
+		return response, err
 	}
-	responseJson := Client(USER_ID, USER_PASSWORD, PULL_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PULL_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	if err != nil {
+		return response, err
+	}
 	// Unmarshall response
 	err = json.Unmarshal(responseJson, &response)
 	if err != nil {
-		log.Fatalf("Error json decoding PullFundsTransactionsPost response: %v", err)
-		return
+		return response, err
 	}
 	return
 }
 
 // PullFundsTransactions (GET) gets the status and details for a specific PullFundsTransactions request
 // if there was a timeout or connection issue on the initial request
-func PullFundsTransactionsGet(statusIdentifier string) (response FundsTransactionResponse) {
+func PullFundsTransactionsGet(statusIdentifier string) (response FundsTransactionResponse, err error) {
 	/*
 	   Get the status and details for a specific PullFundsTransactions POST request if there was a timeout or connection issue on the initial request
 	   The PullFundsTransactions GET operation can be invoked when the initial PullFundsTransactions POST request has returned a timeout error.
@@ -117,13 +142,37 @@ func PullFundsTransactionsGet(statusIdentifier string) (response FundsTransactio
 	   status and details of the initial request.
 	*/
 	requestUrl := PULL_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	fmt.Printf("URL: %s\n", requestUrl)
-	responseJson := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
-	// Unmarshall response
-	err := json.Unmarshal(responseJson, &response)
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
 	if err != nil {
-		log.Fatalf("Error json decoding PullFundsTransactionsGet response: %v", err)
-		return
+		return response, err
+	}
+	// Unmarshall response
+	err = json.Unmarshal(responseJson, &response)
+	if err != nil {
+		return response, err
+	}
+	return
+}
+
+//The MultiPullFundsTransactions resource debits (pulls) funds from multiple sender's Visa accounts (in preparation for pushing funds to one or many
+//recipient's accounts) by initiating an extension of the Account Funding Transaction (AFT) financial message. The MultiPullFundsTransactions
+//resource can be used to submit large API requests with multiple transactions to gain operational efficiencies.
+func MultiPullFundsTransactionsPost(request FundsTransactionRequestMulti) (response FundsTransactionResponse, err error) {
+	/*
+	   Same functionality as PullFundsTransactionsPost but with multiple requests
+	*/
+	body, err := json.Marshal(request)
+	if err != nil {
+		return response, err
+	}
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PULL_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	if err != nil {
+		return response, err
+	}
+	// Unmarshall response
+	err = json.Unmarshal(responseJson, &response)
+	if err != nil {
+		return response, err
 	}
 	return
 }

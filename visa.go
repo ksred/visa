@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -51,7 +50,7 @@ func getApiUrl(production bool) {
 	}
 }
 
-func Client(userId string, userPassword string, url string, reqType string, production bool, body []byte, transactionID string) (response []byte) {
+func Client(userId string, userPassword string, url string, reqType string, production bool, body []byte, transactionID string) (response []byte, err error) {
 	setVariables(userId, userPassword)
 	authHeader := createAuthHeader()
 
@@ -60,17 +59,18 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	req.Header.Set("X-Client-Transaction-ID", transactionID)
 	req.Header.Set("Authorization:Basic ", authHeader)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json,application/octet-stream")
+	//req.Header.Set("Accept", "application/json,application/octet-stream")
+	req.Header.Set("Accept", "application/json")
 
 	// Load client cert
 	cert, err := tls.LoadX509KeyPair(SSL_PUBLIC_KEY_PATH, SSL_PRIVATE_KEY_PATH)
 	if err != nil {
-		log.Fatalf("Could not load key pair: %v", err)
+		return nil, fmt.Errorf("Could not load key pair: %v", err)
 	}
 	// Load CA cert
 	caCert, err := ioutil.ReadFile(SSL_CAPRIVATE_KEY_PATH)
 	if err != nil {
-		log.Fatalf("Could not load CA key: %v", err)
+		return nil, fmt.Errorf("Could not load CA key: %v", err)
 	}
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
@@ -87,18 +87,18 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalf("Could not load HTTPS client: %v", err)
+		return nil, fmt.Errorf("Could not load HTTPS client: %v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Fatalf("HTTP call failed: %v\n", resp.Status)
-		//log.Fatalf("HTTP call failed: %s\nTLS: %b", resp.Header, resp.TLS.HandshakeComplete)
+		response, _ = ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("HTTP error: %s, %v", resp.Status, string(response))
 	}
 
 	response, _ = ioutil.ReadAll(resp.Body)
 	fmt.Printf("Response: %v\n", string(response))
-	return
+	return response, nil
 }
 
 func createAuthHeader() (authHeader string) {

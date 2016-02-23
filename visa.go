@@ -14,14 +14,6 @@ const API_PROD = "https://api.visa.com"
 const API_SANDBOX = "https://sandbox.api.visa.com"
 const API_PORT = 443
 
-const SSL_PUBLIC_KEY_PATH = "certs/application.crt"
-const SSL_PRIVATE_KEY_PATH = "certs/application.pem"
-const SSL_CAPRIVATE_KEY_PATH = "certs/VDPCA-SBX.pem"
-
-var SSL_PUBLIC_KEY = ""
-var SSL_PRIVATE_KEY = ""
-var SSL_CAPRIVATE_KEY = ""
-
 var USER_ID = ""
 var USER_PASSWORD = ""
 

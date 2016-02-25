@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestPullFundsTransactionPost(t *testing.T) {
@@ -45,7 +46,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 		{
 			123456,
 			"407509300259",
-			"2016-02-21T16:22:13",
+			time.Now().Format("2006-01-02T03:04:05"),
 			409999,
 			101,
 			"4957030100009952",
@@ -219,7 +220,7 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 		{
 			123456,
 			"407509300259",
-			"2016-02-22T16:22:13",
+			time.Now().Format("2006-01-02T03:04:05"),
 			409999,
 			101,
 			"4957030100009952",

@@ -98,16 +98,3 @@ func createAuthHeader() (authHeader string) {
 	authHeader = base64.StdEncoding.EncodeToString([]byte(USER_ID + ":" + USER_PASSWORD))
 	return
 }
-
-// PushFundsTransactions or MultiPushFundsTransactions POST operation credits pushes) funds to a recipient's Visa account or multiple Visa accounts, respectively.
-func PushFundsTransactionsPost() {
-}
-
-// PushFundsTransactions or MultiPushFundsTransactions POST operation credits pushes) funds to a recipient's Visa account or multiple Visa accounts, respectively.
-func MultiPushFundsTransactionsPost() {
-}
-
-// ReverseFundsTransactions POST operation credits (pushes back) funds to the sender's Visa account
-// (for example, when authorization for the PushFundsTransactions POST operation is declined)
-func ReverseFundsTransactionsPost() {
-}

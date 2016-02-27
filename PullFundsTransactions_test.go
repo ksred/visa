@@ -121,7 +121,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 				//SecurityRelatedControlInfo: securityRelatedControlInfo,
 			}
 		*/
-		request := FundsTransactionRequest{
+		request := PullFundsTransactionRequest{
 			SystemsTraceAuditNumber:    c.systemsTraceAuditNumber,
 			RetrievalReferenceNumber:   c.retrievalReferenceNumber,
 			LocalTransactionDateTime:   c.localTransactionDateTime,
@@ -151,8 +151,8 @@ func TestPullFundsTransactionPost(t *testing.T) {
 		}
 		fmt.Printf("%+v\n", response)
 		// 1. Check type
-		if reflect.TypeOf(response).String() != "visa.FundsTransactionResponse" {
-			t.Errorf("Return should be of type FundsTransactionResponse. Looking for %s, got %s", "visa.FundsTransactionResponse", reflect.TypeOf(response).String())
+		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionResponse" {
+			t.Errorf("Return should be of type PullFundsTransactionResponse. Looking for %s, got %s", "visa.PullFundsTransactionResponse", reflect.TypeOf(response).String())
 		}
 	}
 }
@@ -175,8 +175,8 @@ func TestPullFundsTransactionGet(t *testing.T) {
 		}
 		fmt.Printf("%+v\n", response)
 		// 1. Check type
-		if reflect.TypeOf(response).String() != "visa.FundsTransactionResponse" {
-			t.Errorf("Return should be of type FundsTransactionResponse. Looking for %s, got %s", "visa.FundsTransactionResponse", reflect.TypeOf(response).String())
+		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionResponse" {
+			t.Errorf("Return should be of type PullFundsTransactionResponse. Looking for %s, got %s", "visa.PullFundsTransactionResponse", reflect.TypeOf(response).String())
 		}
 	}
 }
@@ -295,7 +295,7 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 				//SecurityRelatedControlInfo: securityRelatedControlInfo,
 			}
 		*/
-		requestData1 := FundsTransactionRequestMultiData{
+		requestData1 := PullFundsTransactionRequestMultiData{
 			LocalTransactionDateTime:   c.localTransactionDateTime,
 			SystemsTraceAuditNumber:    c.systemsTraceAuditNumber,
 			RetrievalReferenceNumber:   c.retrievalReferenceNumber,
@@ -312,7 +312,7 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 			//PointOfServiceCapability: &pointOfServiceCapability,
 			//PinData:                  &pinData,
 		}
-		requestData2 := FundsTransactionRequestMultiData{
+		requestData2 := PullFundsTransactionRequestMultiData{
 			LocalTransactionDateTime:   c.localTransactionDateTime,
 			SystemsTraceAuditNumber:    c.systemsTraceAuditNumber,
 			RetrievalReferenceNumber:   c.retrievalReferenceNumber,
@@ -329,27 +329,27 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 			//PointOfServiceCapability: &pointOfServiceCapability,
 			//PinData:                  &pinData,
 		}
-		request := FundsTransactionRequestMulti{
+		request := PullFundsTransactionRequestMulti{
 			LocalTransactionDateTime: c.localTransactionDateTime,
 			AcquiringBin:             c.acquiringBin,
 			AcquirerCountryCode:      c.acquirerCountryCode,
 			BusinessApplicationId:    c.businessApplicationId,
 			MerchantCategoryCode:     c.merchantCategoryCode,
 			//FeeProgramIndicator:      c.feeProgramIndicator,
-			Request: []FundsTransactionRequestMultiData{requestData1, requestData2},
+			Request: []PullFundsTransactionRequestMultiData{requestData1, requestData2},
 		}
 
-		type FundsTransactionRequestMulti struct {
-			SystemsTraceAuditNumber  int                                `json:"systemsTraceAuditNumber"`       // required, 6
-			RetrievalReferenceNumber string                             `json:"retrievalReferenceNumber"`      // ydddhhnnnnnn(numeric characters only), Length: 12
-			LocalTransactionDateTime string                             `json:"localTransactionDateTime"`      // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
-			AcquiringBin             int                                `json:"acquiringBin"`                  // integer | positive, Length: 6 - 11
-			AcquirerCountryCode      int                                `json:"acquirerCountryCode"`           // integer | Length: 3
-			FeeProgramIndicator      string                             `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
-			Request                  []FundsTransactionRequestMultiData `json:"request"`
+		type PullFundsTransactionRequestMulti struct {
+			SystemsTraceAuditNumber  int                                    `json:"systemsTraceAuditNumber"`       // required, 6
+			RetrievalReferenceNumber string                                 `json:"retrievalReferenceNumber"`      // ydddhhnnnnnn(numeric characters only), Length: 12
+			LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`      // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+			AcquiringBin             int                                    `json:"acquiringBin"`                  // integer | positive, Length: 6 - 11
+			AcquirerCountryCode      int                                    `json:"acquirerCountryCode"`           // integer | Length: 3
+			FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
+			Request                  []PullFundsTransactionRequestMultiData `json:"request"`
 		}
 
-		type FundsTransactionRequestMultiData struct {
+		type PullFundsTransactionRequestMultiData struct {
 			SenderPrimaryAccountNumber    string                    `json:"senderPrimaryAccountNumber"`              // string | Length: 13 - 19
 			SenderCardExpiryDate          string                    `json:"senderCardExpiryDate"`                    // string | YYYY-MM
 			SenderCurrencyCode            string                    `json:"senderCurrencyCode"`                      // string | Length: 3
@@ -373,8 +373,32 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 		}
 		fmt.Printf("%+v\n", response)
 		// 1. Check type
-		if reflect.TypeOf(response).String() != "visa.FundsTransactionResponse" {
-			t.Errorf("Return should be of type FundsTransactionResponse. Looking for %s, got %s", "visa.FundsTransactionResponse", reflect.TypeOf(response).String())
+		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionResponse" {
+			t.Errorf("Return should be of type PullFundsTransactionResponse. Looking for %s, got %s", "visa.PullFundsTransactionResponse", reflect.TypeOf(response).String())
+		}
+	}
+}
+
+//@FIXME: Currently receiving a 404. Suspect this might have to do with the transaction not being found, as opposed to the path
+func TestPullMultiFundsTransactionGet(t *testing.T) {
+	cases := []struct {
+		statusIdentifier string
+	}{
+		{
+			"381228649430011",
+		},
+	}
+
+	for _, c := range cases {
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response, err := MultiPullFundsTransactionsGet(c.statusIdentifier)
+		if err != nil {
+			t.Errorf("Error when getting response: %v", err)
+		}
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionRequestMultiResponse" {
+			t.Errorf("Return should be of type PullFundsTransactionRequestMultiResponse. Looking for %s, got %s", "visa.PullFundsTransactionRequestMultiResponse", reflect.TypeOf(response).String())
 		}
 	}
 }

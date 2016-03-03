@@ -5,6 +5,7 @@ import "encoding/json"
 var PULL_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pullfundstransactions/"
 var PULL_MULTI_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/multipullfundstransactions/"
 var PUSH_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pushfundstransactions/"
+var PUSH_MULTI_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/multipushfundstransactions/"
 
 type PullFundsTransactionRequest struct {
 	SystemsTraceAuditNumber       int                       `json:"systemsTraceAuditNumber"`                 // required, 6
@@ -69,6 +70,16 @@ type PullFundsTransactionRequestMulti struct {
 	FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
 }
 
+type PushFundsTransactionRequestMulti struct {
+	LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	AcquiringBin             int                                    `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
+	AcquirerCountryCode      int                                    `json:"acquirerCountryCode"`            // integer | Length: 3
+	BusinessApplicationId    string                                 `json:"businessApplicationId"`          // string | Length: 2
+	MerchantCategoryCode     int                                    `json:"merchantCategoryCode,omitempty"` // Conditional: integer | Length: total 4 digits
+	Request                  []PushFundsTransactionRequestMultiData `json:"request"`
+	FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
+}
+
 type PullFundsTransactionRequestMultiResponse struct {
 	LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
 	AcquiringBin             int                                    `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
@@ -76,6 +87,16 @@ type PullFundsTransactionRequestMultiResponse struct {
 	BusinessApplicationId    string                                 `json:"businessApplicationId"`          // string | Length: 2
 	MerchantCategoryCode     int                                    `json:"merchantCategoryCode,omitempty"` // Conditional: integer | Length: total 4 digits
 	Response                 []PullFundsTransactionRequestMultiData `json:"response"`
+	FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
+}
+
+type PushFundsTransactionRequestMultiResponse struct {
+	LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	AcquiringBin             int                                    `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
+	AcquirerCountryCode      int                                    `json:"acquirerCountryCode"`            // integer | Length: 3
+	BusinessApplicationId    string                                 `json:"businessApplicationId"`          // string | Length: 2
+	MerchantCategoryCode     int                                    `json:"merchantCategoryCode,omitempty"` // Conditional: integer | Length: total 4 digits
+	Response                 []PushFundsTransactionRequestMultiData `json:"response"`
 	FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
 }
 
@@ -95,6 +116,32 @@ type PullFundsTransactionRequestMultiData struct {
 	PointOfServiceData            *PointOfServiceData       `json:"pointOfServiceData,omitempty"`            // Conditional: Object
 	PointOfServiceCapability      *PointOfServiceCapability `json:"pointOfServiceCapability,omitempty"`      // Conditional: Object
 	PinData                       *PinData                  `json:"pinData,omitempty"`                       // Conditional: Object
+}
+
+type PushFundsTransactionRequestMultiData struct {
+	SystemsTraceAuditNumber       int                       `json:"systemsTraceAuditNumber"`            // required, 6
+	RetrievalReferenceNumber      string                    `json:"retrievalReferenceNumber"`           // ydddhhnnnnnn(numeric characters only), Length: 12
+	LocalTransactionDateTime      string                    `json:"localTransactionDateTime"`           // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	SenderAccountNumber           string                    `json:"senderAccountNumber,omitempty"`      // Conditional: string | Length: 0 - 34
+	SenderAddress                 string                    `json:"senderAddress,omitempty"`            // Conditional: string | Length: 1 to 35
+	SenderCity                    string                    `json:"senderCity,omitempty"`               // Conditional: string | Length: 1 to 25
+	SenderStateCode               string                    `json:"senderStateCode,omitempty"`          // Optional: string | Length: 2
+	SenderCountryCode             string                    `json:"senderCountryCode,omitempty"`        // Optional: string | Length: 2 or 33
+	SenderName                    string                    `json:"senderName,omitempty"`               // Optional: string | Length: 1 to 30
+	SenderReference               string                    `json:"senderReference,omitempty"`          // Optional: string | only alphabets (a-z, A-Z) and/or numbers (0-9) allowed , max: 16 characters
+	SenderDateOfBirth             string                    `json:"senderDateOfBirth,omitempty"`        // Optional: string | YYYY-MM-DD
+	RecipientName                 string                    `json:"recipientName,omitempty"`            // Conditional: string | Length: minimum 1, maximum 30
+	RecipientPrimaryAccountNumber string                    `json:"recipientPrimaryAccountNumber"`      // string | Length: 13 - 19
+	TransactionIdentifier         int                       `json:"transactionIdentifier"`              // integer | positive, Length: 15
+	TransactionCurrencyCode       string                    `json:"transactionCurrencyCode"`            // string | Length: 3
+	SourceOfFundsCode             string                    `json:"sourceOfFundsCode,omitempty"`        // Conditional: string | Length: 2
+	Amount                        float64                   `json:"amount,omitempty"`                   // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
+	CardAcceptor                  CardAcceptor              `json:"cardAcceptor"`                       // Object
+	MagneticStripeData            *MagneticStripeData       `json:"magneticStripeData,omitempty"`       // Optional: Object
+	PointOfServiceData            *PointOfServiceData       `json:"pointOfServiceData,omitempty"`       // Conditional: Object
+	PointOfServiceCapability      *PointOfServiceCapability `json:"pointOfServiceCapability,omitempty"` // Conditional: Object
+	PinData                       *PinData                  `json:"pinData,omitempty"`                  // Conditional: Object
+	FeeProgramIndicator           string                    `json:"feeProgramIndicator,omitempty"`      // Optional: string | Length:3
 }
 
 type CardAcceptor struct {
@@ -268,6 +315,43 @@ func PushFundsTransactionsPost(request PushFundsTransactionRequest) (response Pu
 
 func PushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransactionResponse, err error) {
 	requestUrl := PUSH_FUNDS_TRANSACTIONS_URL + statusIdentifier
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	if err != nil {
+		return response, err
+	}
+	// Unmarshall response
+	err = json.Unmarshal(responseJson, &response)
+	if err != nil {
+		return response, err
+	}
+	return
+}
+
+//The MultiPushFundsTransactions resource credits (pushes) funds to multiple recipient's Visa accounts by initiating an extension of the
+//Original Credit Transaction (OCT) financial message. The MultiPushFundsTransactions resource can be used to submit large API
+//requests with multiple transactions to gain operational efficiencies.
+func MultiPushFundsTransactionsPost(request PushFundsTransactionRequestMulti) (response PushFundsTransactionResponse, err error) {
+	body, err := json.Marshal(request)
+	if err != nil {
+		return response, err
+	}
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PUSH_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	if err != nil {
+		return response, err
+	}
+	// Unmarshall response
+	err = json.Unmarshal(responseJson, &response)
+	if err != nil {
+		return response, err
+	}
+	return
+}
+
+//The MultiPushFundsTransactions GET operation can be invoked when the initial MultiPushFundsTransactions POST request has been
+//submitted successfully. All successful MultiPushFundsTransactions POST requests will return a simple 202 response with the
+//appropriate MultiPushFundsTransactions Link header which the client then uses it to get the status and details of the initial reques
+func MultiPushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransactionRequestMultiResponse, err error) {
+	requestUrl := PUSH_MULTI_FUNDS_TRANSACTIONS_URL + statusIdentifier
 	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
 	if err != nil {
 		return response, err

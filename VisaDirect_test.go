@@ -597,3 +597,230 @@ func TestPushFundsTransactionGet(t *testing.T) {
 		}
 	}
 }
+
+func TestPushFundsTransactionMultiPost(t *testing.T) {
+	cases := []struct {
+		systemsTraceAuditNumber        int
+		retrievalReferenceNumber       string
+		localTransactionDateTime       string
+		acquiringBin                   int
+		acquirerCountryCode            int
+		senderAccountNumber            string
+		senderAddress                  string
+		senderCity                     string
+		senderStateCode                string
+		senderCountryCode              string
+		senderName                     string
+		senderReference                string
+		senderDateOfBirth              string
+		recipientName                  string
+		recipientPrimaryAccountNumber  string
+		transactionIdentifier          int
+		transactionCurrencyCode        string
+		sourceOfFundsCode              string
+		amount                         float64
+		businessApplicationId          string
+		merchantCategoryCode           int
+		CAname                         string
+		CAterminalId                   string
+		CAidCode                       string
+		CAAstate                       string
+		CAAcounty                      string
+		CAAcountry                     string
+		CAAzipCode                     string
+		MSDtrack1Data                  string
+		MSDtrack2Data                  string
+		POSDpanEntryMode               int
+		POSDposConditionCode           int
+		POSDmotoECIIndicator           string
+		POSCposTerminalType            int
+		POSCposTerminalEntryCapability int
+		PDpinDataBlock                 string
+		PDSRCIpinBlockFormatCode       int
+		PDSRCIzoneKeyIndex             int
+		feeProgramIndicator            string
+	}{
+		//{},
+		{
+			451018,
+			"412770451018",
+			time.Now().Format("2006-01-02T03:04:05"),
+			409999,
+			101,
+			"4957030100009952",
+			"901 Metro Center Blvd",
+			"Foster City",
+			"CA",
+			"124",
+			"Mohammed Qasim",
+			"",
+			"", //sender dob
+			"roahn",
+			"4957030420210496",
+			381228649430015,
+			"USD",
+			"05",
+			110.,
+			"AA",
+			6012,
+			"Saranya",
+			"365539",
+			"VMT200911026070",
+			"CA",
+			"081",
+			"USA",
+			"94404",
+			"", //"1010101010101010101010101010",
+			"",
+			90,
+			0,
+			"0",
+			4,
+			2,
+			"",
+			0,
+			0,
+			"",
+		},
+	}
+
+	for _, c := range cases {
+		cardAcceptorAddress := CardAcceptorAddress{
+			State:   c.CAAstate,
+			County:  c.CAAcounty,
+			Country: c.CAAcountry,
+			ZipCode: c.CAAzipCode,
+		}
+		cardAcceptor := CardAcceptor{
+			Name:       c.CAname,
+			TerminalId: c.CAterminalId,
+			IdCode:     c.CAidCode,
+			Address:    cardAcceptorAddress,
+		}
+		/*magneticStripeData := MagneticStripeData{
+			Track1Data: c.MSDtrack1Data,
+			Track2Data: c.MSDtrack2Data,
+		}*/
+		/*
+			pointOfServiceData := PointOfServiceData{
+				PanEntryMode:     c.POSDpanEntryMode,
+				PosConditionCode: c.POSDposConditionCode,
+				MotoECIIndicator: c.POSDmotoECIIndicator,
+			}
+		*/
+		/*
+			pointOfServiceCapability := PointOfServiceCapability{
+				PosTerminalType:            c.POSCposTerminalType,
+				PosTerminalEntryCapability: c.POSCposTerminalEntryCapability,
+			}
+		*/
+		/*
+			securityRelatedControlInfo := SecurityRelatedControlInfo{
+				PinBlockFormatCode: c.PDSRCIpinBlockFormatCode,
+				ZoneKeyIndex:       c.PDSRCIzoneKeyIndex,
+			}
+		*/
+		/*
+			pinData := PinData{
+				PinDataBlock: c.PDpinDataBlock,
+				//SecurityRelatedControlInfo: securityRelatedControlInfo,
+			}
+		*/
+		requestData1 := PushFundsTransactionRequestMultiData{
+			SystemsTraceAuditNumber:       c.systemsTraceAuditNumber,
+			RetrievalReferenceNumber:      c.retrievalReferenceNumber,
+			LocalTransactionDateTime:      c.localTransactionDateTime,
+			SenderAccountNumber:           c.senderAccountNumber,
+			SenderAddress:                 c.senderAddress,
+			SenderCity:                    c.senderCity,
+			SenderStateCode:               c.senderStateCode,
+			SenderCountryCode:             c.senderCountryCode,
+			SenderName:                    c.senderName,
+			SenderReference:               c.senderReference,
+			SenderDateOfBirth:             c.senderDateOfBirth,
+			RecipientName:                 c.recipientName,
+			RecipientPrimaryAccountNumber: c.recipientPrimaryAccountNumber,
+			TransactionIdentifier:         c.transactionIdentifier,
+			TransactionCurrencyCode:       c.transactionCurrencyCode,
+			SourceOfFundsCode:             c.sourceOfFundsCode,
+			Amount:                        c.amount,
+			CardAcceptor:                  cardAcceptor,
+			//MagneticStripeData:            &magneticStripeData,
+			//PointOfServiceData:       &pointOfServiceData,
+			//PointOfServiceCapability: &pointOfServiceCapability,
+			//PinData:                  &pinData,
+			FeeProgramIndicator: c.feeProgramIndicator,
+		}
+
+		requestData2 := PushFundsTransactionRequestMultiData{
+			SystemsTraceAuditNumber:       c.systemsTraceAuditNumber,
+			RetrievalReferenceNumber:      c.retrievalReferenceNumber,
+			LocalTransactionDateTime:      c.localTransactionDateTime,
+			SenderAccountNumber:           c.senderAccountNumber,
+			SenderAddress:                 c.senderAddress,
+			SenderCity:                    c.senderCity,
+			SenderStateCode:               c.senderStateCode,
+			SenderCountryCode:             c.senderCountryCode,
+			SenderName:                    c.senderName,
+			SenderReference:               c.senderReference,
+			SenderDateOfBirth:             c.senderDateOfBirth,
+			RecipientName:                 c.recipientName,
+			RecipientPrimaryAccountNumber: c.recipientPrimaryAccountNumber,
+			TransactionIdentifier:         c.transactionIdentifier,
+			TransactionCurrencyCode:       c.transactionCurrencyCode,
+			SourceOfFundsCode:             c.sourceOfFundsCode,
+			Amount:                        c.amount,
+			CardAcceptor:                  cardAcceptor,
+			//MagneticStripeData:            &magneticStripeData,
+			//PointOfServiceData:       &pointOfServiceData,
+			//PointOfServiceCapability: &pointOfServiceCapability,
+			//PinData:                  &pinData,
+			FeeProgramIndicator: c.feeProgramIndicator,
+		}
+
+		request := PushFundsTransactionRequestMulti{
+			LocalTransactionDateTime: c.localTransactionDateTime,
+			AcquiringBin:             c.acquiringBin,
+			AcquirerCountryCode:      c.acquirerCountryCode,
+			BusinessApplicationId:    c.businessApplicationId,
+			MerchantCategoryCode:     c.merchantCategoryCode,
+			//FeeProgramIndicator:      c.feeProgramIndicator,
+			Request: []PushFundsTransactionRequestMultiData{requestData1, requestData2},
+		}
+
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response, err := MultiPushFundsTransactionsPost(request)
+		if err != nil {
+			t.Errorf("Error when getting response: %v", err)
+		}
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionResponse" {
+			t.Errorf("Return should be of type PushFundsTransactionResponse. Looking for %s, got %s", "visa.PushFundsTransactionResponse", reflect.TypeOf(response).String())
+		}
+	}
+
+}
+
+func TestPushMultiFundsTransactionGet(t *testing.T) {
+	cases := []struct {
+		statusIdentifier string
+	}{
+		{
+			"381228649430011",
+		},
+	}
+
+	for _, c := range cases {
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response, err := MultiPushFundsTransactionsGet(c.statusIdentifier)
+		if err != nil {
+			t.Errorf("Error when getting response: %v", err)
+		}
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionRequestMultiResponse" {
+			t.Errorf("Return should be of type PushFundsTransactionRequestMultiResponse. Looking for %s, got %s", "visa.PushFundsTransactionRequestMultiResponse", reflect.TypeOf(response).String())
+		}
+	}
+}

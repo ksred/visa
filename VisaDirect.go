@@ -4,7 +4,7 @@ import "encoding/json"
 
 var PULL_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pullfundstransactions/"
 var PULL_MULTI_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/multipullfundstransactions/"
-var PUSH_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pushfundstransactions"
+var PUSH_FUNDS_TRANSACTIONS_URL = API_URL + "/visadirect/fundstransfer/v1/pushfundstransactions/"
 
 type PullFundsTransactionRequest struct {
 	SystemsTraceAuditNumber       int                       `json:"systemsTraceAuditNumber"`                 // required, 6
@@ -267,7 +267,7 @@ func PushFundsTransactionsPost(request PushFundsTransactionRequest) (response Pu
 }
 
 func PushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransactionResponse, err error) {
-	requestUrl := PULL_MULTI_FUNDS_TRANSACTIONS_URL + statusIdentifier
+	requestUrl := PUSH_FUNDS_TRANSACTIONS_URL + statusIdentifier
 	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
 	if err != nil {
 		return response, err

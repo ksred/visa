@@ -574,3 +574,26 @@ func TestPushFundsTransactionPost(t *testing.T) {
 		}
 	}
 }
+
+func TestPushFundsTransactionGet(t *testing.T) {
+	cases := []struct {
+		statusIdentifier string
+	}{
+		{
+			"234234322342343",
+		},
+	}
+
+	for _, c := range cases {
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response, err := PushFundsTransactionsGet(c.statusIdentifier)
+		if err != nil {
+			t.Errorf("Error when getting response: %v", err)
+		}
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionResponse" {
+			t.Errorf("Return should be of type PushFundsTransactionResponse. Looking for %s, got %s", "visa.PushFundsTransactionResponse", reflect.TypeOf(response).String())
+		}
+	}
+}

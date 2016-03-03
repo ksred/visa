@@ -339,33 +339,6 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 			Request: []PullFundsTransactionRequestMultiData{requestData1, requestData2},
 		}
 
-		type PullFundsTransactionRequestMulti struct {
-			SystemsTraceAuditNumber  int                                    `json:"systemsTraceAuditNumber"`       // required, 6
-			RetrievalReferenceNumber string                                 `json:"retrievalReferenceNumber"`      // ydddhhnnnnnn(numeric characters only), Length: 12
-			LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`      // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
-			AcquiringBin             int                                    `json:"acquiringBin"`                  // integer | positive, Length: 6 - 11
-			AcquirerCountryCode      int                                    `json:"acquirerCountryCode"`           // integer | Length: 3
-			FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
-			Request                  []PullFundsTransactionRequestMultiData `json:"request"`
-		}
-
-		type PullFundsTransactionRequestMultiData struct {
-			SenderPrimaryAccountNumber    string                    `json:"senderPrimaryAccountNumber"`              // string | Length: 13 - 19
-			SenderCardExpiryDate          string                    `json:"senderCardExpiryDate"`                    // string | YYYY-MM
-			SenderCurrencyCode            string                    `json:"senderCurrencyCode"`                      // string | Length: 3
-			Amount                        float64                   `json:"amount,omitempty"`                        // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
-			Surcharge                     float64                   `json:"surcharge,omitempty"`                     // Optional: decimal | Length: totalDigits 12, fractionDigits 3(minimum value is 0)
-			Cavv                          string                    `json:"cavv"`                                    // string | Length:40
-			ForeignExchangeFeeTransaction float64                   `json:"foreignExchangeFeeTransaction,omitempty"` // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
-			BusinessApplicationId         string                    `json:"businessApplicationId"`                   // string | Length: 2
-			MerchantCategoryCode          int                       `json:"merchantCategoryCode,omitempty"`          // Conditional: integer | Length: total 4 digits
-			CardAcceptor                  CardAcceptor              `json:"cardAcceptor"`                            // Object
-			MagneticStripeData            *MagneticStripeData       `json:"magneticStripeData,omitempty"`            // Optional: Object
-			PointOfServiceData            *PointOfServiceData       `json:"pointOfServiceData,omitempty"`            // Conditional: Object
-			PointOfServiceCapability      *PointOfServiceCapability `json:"pointOfServiceCapability,omitempty"`      // Conditional: Object
-			PinData                       *PinData                  `json:"pinData,omitempty"`                       // Conditional: Object
-		}
-
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		response, err := MultiPullFundsTransactionsPost(request)
 		if err != nil {
@@ -824,3 +797,5 @@ func TestPushMultiFundsTransactionGet(t *testing.T) {
 		}
 	}
 }
+
+//@TODO Write tests for reverse funds

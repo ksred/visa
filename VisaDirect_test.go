@@ -377,7 +377,6 @@ func TestPullMultiFundsTransactionGet(t *testing.T) {
 }
 
 func TestPushFundsTransactionPost(t *testing.T) {
-	//@FIXME Incorrect fields
 	cases := []struct {
 		systemsTraceAuditNumber        int
 		retrievalReferenceNumber       string
@@ -798,4 +797,184 @@ func TestPushMultiFundsTransactionGet(t *testing.T) {
 	}
 }
 
-//@TODO Write tests for reverse funds
+func TestReverseFundsTransactionPost(t *testing.T) {
+	cases := []struct {
+		systemsTraceAuditNumber        int
+		retrievalReferenceNumber       string
+		localTransactionDateTime       string
+		acquiringBin                   int
+		acquirerCountryCode            int
+		senderPrimaryAccountNumber     string
+		senderCardExpiryDate           string
+		senderCurrencyCode             string
+		transactionIdentifier          int
+		amount                         float64
+		surcharge                      float64
+		foreignExchangeFeeTransaction  float64
+		odeApprovalCode                string
+		odeSystemsTraceAuditNumber     int
+		odeTransmissionsDateTime       string
+		odeAcquiringBin                int
+		CAname                         string
+		CAterminalId                   string
+		CAidCode                       string
+		CAAstate                       string
+		CAAcounty                      string
+		CAAcountry                     string
+		CAAzipCode                     string
+		MSDtrack1Data                  string
+		MSDtrack2Data                  string
+		POSDpanEntryMode               int
+		POSDposConditionCode           int
+		POSDmotoECIIndicator           string
+		POSCposTerminalType            int
+		POSCposTerminalEntryCapability int
+		PDpinDataBlock                 string
+		PDSRCIpinBlockFormatCode       int
+		PDSRCIzoneKeyIndex             int
+		feeProgramIndicator            string
+	}{
+		//{},
+		{
+			451050,
+			"330000550000",
+			time.Now().Format("2006-01-02T03:04:05"),
+			408999,
+			608,
+			"4895100000055127",
+			"2015-10",
+			"USD",
+			381228649430011,
+			110.,
+			0.01,
+			1.,
+			"408999", //Original Data Element
+			897825,
+			time.Now().Format("2006-01-02T03:04:05"),
+			408999,
+			"Visa Inc. USA-Foster City", //CA
+			"365539",
+			"VMT200911026070",
+			"CA",
+			"San Mateo",
+			"USA",
+			"94404",
+			"", //MSD
+			"",
+			0, //POS
+			0,
+			"",
+			0,
+			0,
+			"", //PinBlock
+			0,
+			0,
+			"",
+		},
+	}
+
+	for _, c := range cases {
+		cardAcceptorAddress := CardAcceptorAddress{
+			State:   c.CAAstate,
+			County:  c.CAAcounty,
+			Country: c.CAAcountry,
+			ZipCode: c.CAAzipCode,
+		}
+		cardAcceptor := CardAcceptor{
+			Name:       c.CAname,
+			TerminalId: c.CAterminalId,
+			IdCode:     c.CAidCode,
+			Address:    cardAcceptorAddress,
+		}
+		originalDataElements := ReverseOriginalDataElements{
+			ApprovalCode:            c.odeApprovalCode,
+			SystemsTraceAuditNumber: c.odeSystemsTraceAuditNumber,
+			TransmissionDateTime:    c.odeTransmissionsDateTime,
+			AcquiringBin:            c.odeAcquiringBin,
+		}
+		/*magneticStripeData := MagneticStripeData{
+			Track1Data: c.MSDtrack1Data,
+			Track2Data: c.MSDtrack2Data,
+		}*/
+		/*
+			pointOfServiceData := PointOfServiceData{
+				PanEntryMode:     c.POSDpanEntryMode,
+				PosConditionCode: c.POSDposConditionCode,
+				MotoECIIndicator: c.POSDmotoECIIndicator,
+			}
+		*/
+		/*
+			pointOfServiceCapability := PointOfServiceCapability{
+				PosTerminalType:            c.POSCposTerminalType,
+				PosTerminalEntryCapability: c.POSCposTerminalEntryCapability,
+			}
+		*/
+		/*
+			securityRelatedControlInfo := SecurityRelatedControlInfo{
+				PinBlockFormatCode: c.PDSRCIpinBlockFormatCode,
+				ZoneKeyIndex:       c.PDSRCIzoneKeyIndex,
+			}
+		*/
+		/*
+			pinData := PinData{
+				PinDataBlock: c.PDpinDataBlock,
+				//SecurityRelatedControlInfo: securityRelatedControlInfo,
+			}
+		*/
+		request := ReverseFundsTransactionRequest{
+			SystemsTraceAuditNumber:       c.systemsTraceAuditNumber,
+			RetrievalReferenceNumber:      c.retrievalReferenceNumber,
+			LocalTransactionDateTime:      c.localTransactionDateTime,
+			AcquiringBin:                  c.acquiringBin,
+			AcquirerCountryCode:           c.acquirerCountryCode,
+			SenderPrimaryAccountNumber:    c.senderPrimaryAccountNumber,
+			SenderCardExpiryDate:          c.senderCardExpiryDate,
+			SenderCurrencyCode:            c.senderCurrencyCode,
+			TransactionIdentifier:         c.transactionIdentifier,
+			Amount:                        c.amount,
+			Surcharge:                     c.surcharge,
+			ForeignExchangeFeeTransaction: c.foreignExchangeFeeTransaction,
+			OriginalDataElements:          originalDataElements,
+			CardAcceptor:                  cardAcceptor,
+			//MagneticStripeData:            &magneticStripeData,
+			//PointOfServiceData:       &pointOfServiceData,
+			//PointOfServiceCapability: &pointOfServiceCapability,
+			//PinData:                  &pinData,
+			FeeProgramIndicator: c.feeProgramIndicator,
+		}
+
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response, err := ReverseFundsTransactionsPost(request)
+		if err != nil {
+			t.Errorf("Error when getting response: %v", err)
+		}
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.ReverseFundsTransactionResponse" {
+			t.Errorf("Return should be of type ReverseFundsTransactionResponse. Looking for %s, got %s", "visa.ReverseFundsTransactionResponse", reflect.TypeOf(response).String())
+		}
+	}
+}
+
+func TestReverseFundsTransactionGet(t *testing.T) {
+	cases := []struct {
+		statusIdentifier string
+	}{
+		{
+			"234234322342343",
+		},
+	}
+
+	for _, c := range cases {
+		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		response, err := ReverseFundsTransactionsGet(c.statusIdentifier)
+		if err != nil {
+			t.Errorf("Error when getting response: %v", err)
+		}
+		fmt.Printf("%+v\n", response)
+		// 1. Check type
+		if reflect.TypeOf(response).String() != "visa.ReverseFundsTransactionResponse" {
+			t.Errorf("Return should be of type ReverseFundsTransactionResponse. Looking for %s, got %s", "visa.ReverseFundsTransactionResponse", reflect.TypeOf(response).String())
+		}
+	}
+}

@@ -165,6 +165,9 @@ func TestPullFundsTransactionGet(t *testing.T) {
 		{
 			"381228649430011",
 		},
+		{
+			"23423432",
+		},
 	}
 
 	for _, c := range cases {

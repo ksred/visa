@@ -108,6 +108,13 @@ type PushFundsTransactionRequestMulti struct {
 	FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
 }
 
+type ReverseFundsTransactionRequestMulti struct {
+	LocalTransactionDateTime string                                    `json:"localTransactionDateTime"` // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	AcquiringBin             int                                       `json:"acquiringBin"`             // integer | positive, Length: 6 - 11
+	AcquirerCountryCode      int                                       `json:"acquirerCountryCode"`      // integer | Length: 3
+	Request                  []ReverseFundsTransactionRequestMultiData `json:"request"`
+}
+
 type PullFundsTransactionRequestMultiResponse struct {
 	LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
 	AcquiringBin             int                                    `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
@@ -126,6 +133,27 @@ type PushFundsTransactionRequestMultiResponse struct {
 	MerchantCategoryCode     int                                    `json:"merchantCategoryCode,omitempty"` // Conditional: integer | Length: total 4 digits
 	Response                 []PushFundsTransactionRequestMultiData `json:"response"`
 	FeeProgramIndicator      string                                 `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
+}
+
+type ReverseFundsTransactionRequestMultiResponse struct {
+	StatusIdentifier      string                                        `json:"statusIdentifier"`      // string | required when call times out
+	TransactionIdentifier int                                           `json:"transactionIdentifier"` // integer | positive and required when call does not timeout, Length: 15
+	Response              []ReverseFundsTransactionResponseAftrResponse `json:"response"`
+}
+
+type ReverseFundsTransactionResponseAftrResponse struct {
+	AftrResponseDetail      ReverseFundsTransactionResponseAftrResponseDetail `json:"afrResponseDetail"`
+	SystemsTraceAuditNumber int                                               `json:"systemsTraceAuditNumber"` // required, 6
+}
+
+type ReverseFundsTransactionResponseAftrResponseDetail struct {
+	ActionCode           string `json:"actionCode"`                    // string | Length: 2
+	ApprovalCode         string `json:"ApprovalCode,omitempty"`        // Optional: string | Length: 6
+	TransmissionDateTime string `json:"transmissionDateTime"`          // dateTime | YYYY-MM-DDThh:mm:ss
+	CavvResultCode       string `json:"cavvResultCode,omitempty"`      // Optional: string | Length: 1
+	ResponseCode         string `json:"responseCode"`                  // string | Length: 1
+	FeeProgramIndicator  string `json:"feeProgramIndicator,omitempty"` // Optional: string | Length:3
+	ErrorMessage         string `json:"errorMessage,omitempty"`        // Optional: string | Length:3
 }
 
 type PullFundsTransactionRequestMultiData struct {
@@ -170,6 +198,26 @@ type PushFundsTransactionRequestMultiData struct {
 	PointOfServiceCapability      *PointOfServiceCapability `json:"pointOfServiceCapability,omitempty"` // Conditional: Object
 	PinData                       *PinData                  `json:"pinData,omitempty"`                  // Conditional: Object
 	FeeProgramIndicator           string                    `json:"feeProgramIndicator,omitempty"`      // Optional: string | Length:3
+}
+
+type ReverseFundsTransactionRequestMultiData struct {
+	SystemsTraceAuditNumber       int                         `json:"systemsTraceAuditNumber"`                 // required, 6
+	RetrievalReferenceNumber      string                      `json:"retrievalReferenceNumber"`                // ydddhhnnnnnn(numeric characters only), Length: 12
+	TransactionIdentifier         int                         `json:"transactionIdentifier"`                   // integer | positive, Length: 15
+	LocalTransactionDateTime      string                      `json:"localTransactionDateTime"`                // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
+	AcquiringBin                  int                         `json:"acquiringBin"`                            // integer | positive, Length: 6 - 11
+	AcquirerCountryCode           int                         `json:"acquirerCountryCode"`                     // integer | Length: 3
+	SenderPrimaryAccountNumber    string                      `json:"senderPrimaryAccountNumber,omitempty"`    // Conditional: string | Length: 0 - 34
+	SenderCardExpiryDate          string                      `json:"senderCardExpiryDate,omitempty"`          // Conditional: string | Length: 1 to 35
+	SenderCurrencyCode            string                      `json:"senderCurrencyCode,omitempty"`            // Conditional: string | Length: 1 to 25
+	Amount                        float64                     `json:"amount,omitempty"`                        // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
+	Surcharge                     float64                     `json:"surcharge,omitempty"`                     // Optional: decimal | Length: totalDigits 12, fractionDigits 3(minimum value is 0)
+	ForeignExchangeFeeTransaction float64                     `json:"foreignExchangeFeeTransaction,omitempty"` // Optional: decimal | Length: totalDigits 12, fractionDigits 3 (minimum value is 0)
+	OriginalDataElements          ReverseOriginalDataElements `json:"originalDataElements"`                    // Object
+	CardAcceptor                  CardAcceptor                `json:"cardAcceptor"`                            // Object
+	PointOfServiceData            *PointOfServiceData         `json:"pointOfServiceData,omitempty"`            // Conditional: Object
+	PointOfServiceCapability      *PointOfServiceCapability   `json:"pointOfServiceCapability,omitempty"`      // Conditional: Object
+	FeeProgramIndicator           string                      `json:"feeProgramIndicator,omitempty"`           // Optional: string | Length:3
 }
 
 type CardAcceptor struct {
@@ -311,10 +359,14 @@ func MultiPullFundsTransactionsPost(request PullFundsTransactionRequestMulti) (r
 		return response, err
 	}
 	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for multi= call does not respond with json, but a single value
+	response.StatusIdentifier = string(responseJson)
+	/*
+		err = json.Unmarshal(responseJson, &response)
+		if err != nil {
+			return response, err
+		}
+	*/
 	return
 }
 
@@ -379,10 +431,14 @@ func MultiPushFundsTransactionsPost(request PushFundsTransactionRequestMulti) (r
 		return response, err
 	}
 	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for multi= call does not respond with json, but a single value
+	response.StatusIdentifier = string(responseJson)
+	/*
+		err = json.Unmarshal(responseJson, &response)
+		if err != nil {
+			return response, err
+		}
+	*/
 	return
 }
 
@@ -405,7 +461,7 @@ func MultiPushFundsTransactionsGet(statusIdentifier string) (response PushFundsT
 
 //The ReverseFundsTransactions resource credits (pushes back) funds to the sender's Visa account by initiating a
 //financial message called an Account Funding Transaction Reversal (AFTR).
-func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest) (response ReverseFundsTransactionResponse, err error) {
+func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest) (response ReverseFundsTransactionRequestMultiResponse, err error) {
 	body, err := json.Marshal(request)
 	if err != nil {
 		return response, err
@@ -415,10 +471,14 @@ func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest) (respo
 		return response, err
 	}
 	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for multi= call does not respond with json, but a single value
+	response.StatusIdentifier = string(responseJson)
+	/*
+		err = json.Unmarshal(responseJson, &response)
+		if err != nil {
+			return response, err
+		}
+	*/
 	return
 }
 
@@ -426,7 +486,7 @@ func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest) (respo
 //The ReverseFundsTransactions GET operation can be invoked when the initial ReverseFundsTransactions POST request has returned a
 //timeout error. When a timeout occurs, the response will include the appropriate reverseFundsTransactions Link header which the client
 //then uses to get the status and details of the initial request.
-func ReverseFundsTransactionsGet(statusIdentifier string) (response ReverseFundsTransactionResponse, err error) {
+func ReverseFundsTransactionsGet(statusIdentifier string) (response ReverseFundsTransactionRequestMultiResponse, err error) {
 	requestUrl := REVERSE_FUNDS_TRANSACTIONS_URL + statusIdentifier
 	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
 	if err != nil {

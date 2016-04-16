@@ -163,10 +163,7 @@ func TestPullFundsTransactionGet(t *testing.T) {
 		statusIdentifier string
 	}{
 		{
-			"381228649430011",
-		},
-		{
-			"23423432",
+			"234234322342343",
 		},
 	}
 
@@ -344,6 +341,14 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		response, err := MultiPullFundsTransactionsPost(request)
+		/* Convert to JSON for debugging
+		reqJson, err := json.Marshal(request)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		fmt.Printf("%+v\n", string(reqJson))
+		os.Exit(1)
+		*/
 		if err != nil {
 			t.Errorf("Error when getting response: %v\n", err)
 		}
@@ -765,6 +770,14 @@ func TestPushFundsTransactionMultiPost(t *testing.T) {
 
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		response, err := MultiPushFundsTransactionsPost(request)
+		/* Convert to JSON for debugging
+		reqJson, err := json.Marshal(request)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		fmt.Printf("%+v\n", string(reqJson))
+		os.Exit(1)
+		*/
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
@@ -1155,6 +1168,14 @@ func TestReverseFundsTransactionMultiPost(t *testing.T) {
 
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		response, err := MultiReverseFundsTransactionsPost(request)
+		/* Convert to JSON for debugging
+		reqJson, err := json.Marshal(request)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		fmt.Printf("%+v\n", string(reqJson))
+		os.Exit(1)
+		*/
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}

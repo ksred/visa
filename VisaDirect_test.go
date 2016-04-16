@@ -1,7 +1,6 @@
 package visa
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 	"time"
@@ -149,7 +148,7 @@ func TestPullFundsTransactionPost(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionResponse" {
 			t.Errorf("Return should be of type PullFundsTransactionResponse. Looking for %s, got %s", "visa.PullFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -157,7 +156,6 @@ func TestPullFundsTransactionPost(t *testing.T) {
 	}
 }
 
-//@FIXME: Currently receiving a 404. Suspect this might have to do with the transaction not being found, as opposed to the path
 func TestPullFundsTransactionGet(t *testing.T) {
 	cases := []struct {
 		statusIdentifier string
@@ -173,7 +171,7 @@ func TestPullFundsTransactionGet(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionResponse" {
 			t.Errorf("Return should be of type PullFundsTransactionResponse. Looking for %s, got %s", "visa.PullFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -340,19 +338,20 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 		}
 
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
-		response, err := MultiPullFundsTransactionsPost(request)
-		/* Convert to JSON for debugging
-		reqJson, err := json.Marshal(request)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		fmt.Printf("%+v\n", string(reqJson))
-		os.Exit(1)
+		/*
+			//Convert to JSON for debugging
+			reqJson, errJS := json.Marshal(request)
+			if errJS != nil {
+				//fmt.Println(errJS.Error())
+			}
+			fmt.Printf("%+v\n", string(reqJson))
+			//os.Exit(1)
 		*/
+		response, err := MultiPullFundsTransactionsPost(request)
 		if err != nil {
 			t.Errorf("Error when getting response: %v\n", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionResponse" {
 			t.Errorf("Return should be of type PullFundsTransactionResponse. Looking for %s, got %s", "visa.PullFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -376,7 +375,7 @@ func TestPullMultiFundsTransactionGet(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PullFundsTransactionRequestMultiResponse" {
 			t.Errorf("Return should be of type PullFundsTransactionRequestMultiResponse. Looking for %s, got %s", "visa.PullFundsTransactionRequestMultiResponse", reflect.TypeOf(response).String())
@@ -547,7 +546,7 @@ func TestPushFundsTransactionPost(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionResponse" {
 			t.Errorf("Return should be of type PushFundsTransactionResponse. Looking for %s, got %s", "visa.PushFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -570,7 +569,7 @@ func TestPushFundsTransactionGet(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionResponse" {
 			t.Errorf("Return should be of type PushFundsTransactionResponse. Looking for %s, got %s", "visa.PushFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -769,19 +768,20 @@ func TestPushFundsTransactionMultiPost(t *testing.T) {
 		}
 
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
-		response, err := MultiPushFundsTransactionsPost(request)
-		/* Convert to JSON for debugging
-		reqJson, err := json.Marshal(request)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		fmt.Printf("%+v\n", string(reqJson))
-		os.Exit(1)
+		/*
+			//Convert to JSON for debugging
+			reqJson, errJS := json.Marshal(request)
+			if errJS != nil {
+				fmt.Println(errJS.Error())
+			}
+			fmt.Printf("%+v\n", string(reqJson))
+			//os.Exit(1)
 		*/
+		response, err := MultiPushFundsTransactionsPost(request)
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionResponse" {
 			t.Errorf("Return should be of type PushFundsTransactionResponse. Looking for %s, got %s", "visa.PushFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -805,7 +805,7 @@ func TestPushMultiFundsTransactionGet(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.PushFundsTransactionRequestMultiResponse" {
 			t.Errorf("Return should be of type PushFundsTransactionRequestMultiResponse. Looking for %s, got %s", "visa.PushFundsTransactionRequestMultiResponse", reflect.TypeOf(response).String())
@@ -960,11 +960,20 @@ func TestReverseFundsTransactionPost(t *testing.T) {
 		}
 
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
+		/*
+			//Convert to JSON for debugging
+			reqJson, errJS := json.Marshal(request)
+			if errJS != nil {
+				//fmt.Println(errJS.Error())
+			}
+			fmt.Printf("%+v\n", string(reqJson))
+			//os.Exit(1)
+		*/
 		response, err := ReverseFundsTransactionsPost(request)
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.ReverseFundsTransactionResponse" {
 			t.Errorf("Return should be of type ReverseFundsTransactionResponse. Looking for %s, got %s", "visa.ReverseFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -987,7 +996,7 @@ func TestReverseFundsTransactionGet(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.ReverseFundsTransactionResponse" {
 			t.Errorf("Return should be of type ReverseFundsTransactionResponse. Looking for %s, got %s", "visa.ReverseFundsTransactionResponse", reflect.TypeOf(response).String())
@@ -1179,7 +1188,7 @@ func TestReverseFundsTransactionMultiPost(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.ReverseFundsTransactionRequestMultiResponse" {
 			t.Errorf("Return should be of type ReverseFundsTransactionRequestMultiResponse. Looking for %s, got %s", "visa.ReverseFundsTransactionRequestMultiResponse", reflect.TypeOf(response).String())
@@ -1202,7 +1211,7 @@ func TestReverseFundsTransactionMultiGet(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
-		fmt.Printf("%+v\n", response)
+		//fmt.Printf("%+v\n", response)
 		// 1. Check type
 		if reflect.TypeOf(response).String() != "visa.ReverseFundsTransactionRequestMultiResponse" {
 			t.Errorf("Return should be of type ReverseFundsTransactionRequestMultiResponse. Looking for %s, got %s", "visa.ReverseFundsTransactionRequestMultiResponse", reflect.TypeOf(response).String())

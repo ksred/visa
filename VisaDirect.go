@@ -269,6 +269,7 @@ type ReverseFundsTransactionResponse struct {
 }
 
 type PullFundsTransactionRequestMultiResponse struct {
+	StatusIdentifier         string                                 `json:"statusIdentifier"`               // string | required when call times out
 	LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
 	AcquiringBin             int                                    `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
 	AcquirerCountryCode      int                                    `json:"acquirerCountryCode"`            // integer | Length: 3
@@ -279,6 +280,7 @@ type PullFundsTransactionRequestMultiResponse struct {
 }
 
 type PushFundsTransactionRequestMultiResponse struct {
+	StatusIdentifier         string                                 `json:"statusIdentifier"`               // string | required when call times out
 	LocalTransactionDateTime string                                 `json:"localTransactionDateTime"`       // RFC3339. dateTime | YYYY-MM-DDThh:mm:ss. The date and time you submit the transaction
 	AcquiringBin             int                                    `json:"acquiringBin"`                   // integer | positive, Length: 6 - 11
 	AcquirerCountryCode      int                                    `json:"acquirerCountryCode"`            // integer | Length: 3
@@ -349,11 +351,9 @@ func PullFundsTransactionsGet(statusIdentifier string) (response PullFundsTransa
 	if err != nil {
 		return response, err
 	}
-	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+
+	// The response for GET returns StatusIdentifier
+	response.StatusIdentifier = string(responseJson)
 	return
 }
 
@@ -375,12 +375,6 @@ func MultiPullFundsTransactionsPost(request PullFundsTransactionRequestMulti) (r
 	// Unmarshall response
 	// The response for multi= call does not respond with json, but a single value
 	response.StatusIdentifier = string(responseJson)
-	/*
-		err = json.Unmarshal(responseJson, &response)
-		if err != nil {
-			return response, err
-		}
-	*/
 	return
 }
 
@@ -392,10 +386,8 @@ func MultiPullFundsTransactionsGet(statusIdentifier string) (response PullFundsT
 		return response, err
 	}
 	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for multi= call does not respond with json, but a single value
+	response.StatusIdentifier = string(responseJson)
 	return
 }
 
@@ -424,11 +416,8 @@ func PushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransa
 	if err != nil {
 		return response, err
 	}
-	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for GET returns StatusIdentifier
+	response.StatusIdentifier = string(responseJson)
 	return
 }
 
@@ -447,12 +436,6 @@ func MultiPushFundsTransactionsPost(request PushFundsTransactionRequestMulti) (r
 	// Unmarshall response
 	// The response for multi= call does not respond with json, but a single value
 	response.StatusIdentifier = string(responseJson)
-	/*
-		err = json.Unmarshal(responseJson, &response)
-		if err != nil {
-			return response, err
-		}
-	*/
 	return
 }
 
@@ -466,10 +449,8 @@ func MultiPushFundsTransactionsGet(statusIdentifier string) (response PushFundsT
 		return response, err
 	}
 	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for multi= call does not respond with json, but a single value
+	response.StatusIdentifier = string(responseJson)
 	return
 }
 
@@ -502,11 +483,9 @@ func ReverseFundsTransactionsGet(statusIdentifier string) (response ReverseFunds
 	if err != nil {
 		return response, err
 	}
-	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+
+	// The response for GET returns StatusIdentifier
+	response.StatusIdentifier = string(responseJson)
 	return
 }
 
@@ -522,12 +501,6 @@ func MultiReverseFundsTransactionsPost(request ReverseFundsTransactionRequestMul
 	// Unmarshall response
 	// The response for multi= call does not respond with json, but a single value
 	response.StatusIdentifier = string(responseJson)
-	/*
-		err = json.Unmarshal(responseJson, &response)
-		if err != nil {
-			return response, err
-		}
-	*/
 	return
 }
 
@@ -538,9 +511,7 @@ func MultiReverseFundsTransactionsGet(statusIdentifier string) (response Reverse
 		return response, err
 	}
 	// Unmarshall response
-	err = json.Unmarshal(responseJson, &response)
-	if err != nil {
-		return response, err
-	}
+	// The response for multi= call does not respond with json, but a single value
+	response.StatusIdentifier = string(responseJson)
 	return
 }

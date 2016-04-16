@@ -83,13 +83,14 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	// HTTP 200 and 404 are not errors
+	if resp.StatusCode != 200 && resp.StatusCode != 404 {
 		response, _ = ioutil.ReadAll(resp.Body)
 		return nil, fmt.Errorf("HTTP error: %s, %v", resp.Status, string(response))
 	}
 
 	response, _ = ioutil.ReadAll(resp.Body)
-	fmt.Printf("Response: %v\n", string(response))
+	//fmt.Printf("Response: %v\n", string(response))
 	return response, nil
 }
 

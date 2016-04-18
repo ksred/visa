@@ -51,7 +51,7 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	req.Header.Set("X-Client-Transaction-ID", transactionID)
 	req.Header.Set("Authorization:Basic ", authHeader)
 	req.Header.Set("Content-Type", "application/json")
-	// Accept Header needs to switched
+	// Accept Header needs to be switched for specific calls
 	// https://github.com/visa/SampleCode/issues/13
 	switch acceptType {
 	case "octet-stream":
@@ -89,8 +89,8 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	}
 	defer resp.Body.Close()
 
-	// HTTP 200, 202, 404 are not errors
-	if resp.StatusCode != 200 && resp.StatusCode != 404 && resp.StatusCode != 202 {
+	// HTTP 200 and 404 are not errors
+	if resp.StatusCode != 200 && resp.StatusCode != 404 {
 		response, _ = ioutil.ReadAll(resp.Body)
 		return nil, fmt.Errorf("HTTP error: %s, %v", resp.Status, string(response))
 	}

@@ -188,7 +188,6 @@ func TestPullFundsTransactionGet(t *testing.T) {
 }
 
 func TestPullFundsTransactionMultiPost(t *testing.T) {
-	t.Skip("Skipping test while waiting for issue#4 to be resolved - Internal 500 on multi requests")
 	cases := []struct {
 		systemsTraceAuditNumber        int
 		retrievalReferenceNumber       string
@@ -593,7 +592,6 @@ func TestPushFundsTransactionGet(t *testing.T) {
 }
 
 func TestPushFundsTransactionMultiPost(t *testing.T) {
-	t.Skip("Skipping test while waiting for issue#4 to be resolved - Internal 500 on multi requests")
 	cases := []struct {
 		systemsTraceAuditNumber        int
 		retrievalReferenceNumber       string
@@ -1029,7 +1027,6 @@ func TestReverseFundsTransactionGet(t *testing.T) {
 }
 
 func TestReverseFundsTransactionMultiPost(t *testing.T) {
-	t.Skip("Skipping test while waiting for issue#4 to be resolved - Internal 500 on multi requests")
 	cases := []struct {
 		systemsTraceAuditNumber        int
 		retrievalReferenceNumber       string

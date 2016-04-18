@@ -51,6 +51,8 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	req.Header.Set("X-Client-Transaction-ID", transactionID)
 	req.Header.Set("Authorization:Basic ", authHeader)
 	req.Header.Set("Content-Type", "application/json")
+	// Accept Header needs to switched
+	// https://github.com/visa/SampleCode/issues/13
 	switch acceptType {
 	case "octet-stream":
 		req.Header.Set("Accept", "application/octet-stream")

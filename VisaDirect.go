@@ -315,7 +315,7 @@ type ReverseFundsTransactionResponseAftrResponseDetail struct {
 
 // PullFundsTransactions (POST) Resource debits (pulls) funds from a sender's Visa account (in preparation for pushing funds to a recipient's account)
 // by initiating a financial message called an Account Funding Transaction (AFT)
-func PullFundsTransactionsPost(request PullFundsTransactionRequest) (response PullFundsTransactionResponse, err error) {
+func PullFundsTransactionsPost(request PullFundsTransactionRequest, uuid string) (response PullFundsTransactionResponse, err error) {
 	/*
 	   You should log or otherwise retain all the information returned in the PullFundsTransactions response.
 	   Should it be necessary to initiate a ReverseFundsTransactions POST operation, you may need to provide
@@ -325,7 +325,7 @@ func PullFundsTransactionsPost(request PullFundsTransactionRequest) (response Pu
 	if err != nil {
 		return response, err
 	}
-	responseJson, err := Client(USER_ID, USER_PASSWORD, PULL_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PULL_FUNDS_TRANSACTIONS_URL, "POST", false, body, uuid, "json")
 	if err != nil {
 		return response, err
 	}
@@ -347,7 +347,7 @@ func PullFundsTransactionsGet(statusIdentifier string) (response PullFundsTransa
 	   status and details of the initial request.
 	*/
 	requestUrl := PULL_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "", "json")
 	if err != nil {
 		return response, err
 	}
@@ -360,7 +360,7 @@ func PullFundsTransactionsGet(statusIdentifier string) (response PullFundsTransa
 //The MultiPullFundsTransactions resource debits (pulls) funds from multiple sender's Visa accounts (in preparation for pushing funds to one or many
 //recipient's accounts) by initiating an extension of the Account Funding Transaction (AFT) financial message. The MultiPullFundsTransactions
 //resource can be used to submit large API requests with multiple transactions to gain operational efficiencies.
-func MultiPullFundsTransactionsPost(request PullFundsTransactionRequestMulti) (response PullFundsTransactionResponse, err error) {
+func MultiPullFundsTransactionsPost(request PullFundsTransactionRequestMulti, uuid string) (response PullFundsTransactionResponse, err error) {
 	/*
 	   Same functionality as PullFundsTransactionsPost but with multiple requests
 	*/
@@ -368,7 +368,7 @@ func MultiPullFundsTransactionsPost(request PullFundsTransactionRequestMulti) (r
 	if err != nil {
 		return response, err
 	}
-	responseJson, err := Client(USER_ID, USER_PASSWORD, PULL_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PULL_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, uuid, "octet-stream")
 	if err != nil {
 		return response, err
 	}
@@ -381,7 +381,7 @@ func MultiPullFundsTransactionsPost(request PullFundsTransactionRequestMulti) (r
 //The MultiPullFundsTransactionsGet gets the status and details for a specific MultiPullFundsTransactions POST request.
 func MultiPullFundsTransactionsGet(statusIdentifier string) (response PullFundsTransactionRequestMultiResponse, err error) {
 	requestUrl := PULL_MULTI_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "", "octet-stream")
 	if err != nil {
 		return response, err
 	}
@@ -393,12 +393,12 @@ func MultiPullFundsTransactionsGet(statusIdentifier string) (response PullFundsT
 
 //PushFundsTransactions resource credits (pushes) funds to a recipient's Visa account by
 //initiating a financial message called an Original Credit Transaction (OCT)
-func PushFundsTransactionsPost(request PushFundsTransactionRequest) (response PushFundsTransactionResponse, err error) {
+func PushFundsTransactionsPost(request PushFundsTransactionRequest, uuid string) (response PushFundsTransactionResponse, err error) {
 	body, err := json.Marshal(request)
 	if err != nil {
 		return response, err
 	}
-	responseJson, err := Client(USER_ID, USER_PASSWORD, PUSH_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PUSH_FUNDS_TRANSACTIONS_URL, "POST", false, body, uuid, "json")
 	if err != nil {
 		return response, err
 	}
@@ -412,7 +412,7 @@ func PushFundsTransactionsPost(request PushFundsTransactionRequest) (response Pu
 
 func PushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransactionResponse, err error) {
 	requestUrl := PUSH_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "", "json")
 	if err != nil {
 		return response, err
 	}
@@ -424,12 +424,12 @@ func PushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransa
 //The MultiPushFundsTransactions resource credits (pushes) funds to multiple recipient's Visa accounts by initiating an extension of the
 //Original Credit Transaction (OCT) financial message. The MultiPushFundsTransactions resource can be used to submit large API
 //requests with multiple transactions to gain operational efficiencies.
-func MultiPushFundsTransactionsPost(request PushFundsTransactionRequestMulti) (response PushFundsTransactionResponse, err error) {
+func MultiPushFundsTransactionsPost(request PushFundsTransactionRequestMulti, uuid string) (response PushFundsTransactionResponse, err error) {
 	body, err := json.Marshal(request)
 	if err != nil {
 		return response, err
 	}
-	responseJson, err := Client(USER_ID, USER_PASSWORD, PUSH_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, PUSH_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, uuid, "octet-stream")
 	if err != nil {
 		return response, err
 	}
@@ -444,7 +444,7 @@ func MultiPushFundsTransactionsPost(request PushFundsTransactionRequestMulti) (r
 //appropriate MultiPushFundsTransactions Link header which the client then uses it to get the status and details of the initial reques
 func MultiPushFundsTransactionsGet(statusIdentifier string) (response PushFundsTransactionRequestMultiResponse, err error) {
 	requestUrl := PUSH_MULTI_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "", "octet-stream")
 	if err != nil {
 		return response, err
 	}
@@ -456,12 +456,12 @@ func MultiPushFundsTransactionsGet(statusIdentifier string) (response PushFundsT
 
 //The ReverseFundsTransactions resource credits (pushes back) funds to the sender's Visa account by initiating a
 //financial message called an Account Funding Transaction Reversal (AFTR).
-func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest) (response ReverseFundsTransactionResponse, err error) {
+func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest, uuid string) (response ReverseFundsTransactionResponse, err error) {
 	body, err := json.Marshal(request)
 	if err != nil {
 		return response, err
 	}
-	responseJson, err := Client(USER_ID, USER_PASSWORD, REVERSE_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, REVERSE_FUNDS_TRANSACTIONS_URL, "POST", false, body, uuid, "json")
 	if err != nil {
 		return response, err
 	}
@@ -479,7 +479,7 @@ func ReverseFundsTransactionsPost(request ReverseFundsTransactionRequest) (respo
 //then uses to get the status and details of the initial request.
 func ReverseFundsTransactionsGet(statusIdentifier string) (response ReverseFundsTransactionResponse, err error) {
 	requestUrl := REVERSE_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "", "json")
 	if err != nil {
 		return response, err
 	}
@@ -489,12 +489,12 @@ func ReverseFundsTransactionsGet(statusIdentifier string) (response ReverseFunds
 	return
 }
 
-func MultiReverseFundsTransactionsPost(request ReverseFundsTransactionRequestMulti) (response ReverseFundsTransactionRequestMultiResponse, err error) {
+func MultiReverseFundsTransactionsPost(request ReverseFundsTransactionRequestMulti, uuid string) (response ReverseFundsTransactionRequestMultiResponse, err error) {
 	body, err := json.Marshal(request)
 	if err != nil {
 		return response, err
 	}
-	responseJson, err := Client(USER_ID, USER_PASSWORD, REVERSE_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, REVERSE_MULTI_FUNDS_TRANSACTIONS_URL, "POST", false, body, uuid, "octet-stream")
 	if err != nil {
 		return response, err
 	}
@@ -506,7 +506,7 @@ func MultiReverseFundsTransactionsPost(request ReverseFundsTransactionRequestMul
 
 func MultiReverseFundsTransactionsGet(statusIdentifier string) (response ReverseFundsTransactionRequestMultiResponse, err error) {
 	requestUrl := REVERSE_MULTI_FUNDS_TRANSACTIONS_URL + statusIdentifier
-	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "0")
+	responseJson, err := Client(USER_ID, USER_PASSWORD, requestUrl, "GET", false, nil, "", "octet-stream")
 	if err != nil {
 		return response, err
 	}

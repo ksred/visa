@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/satori/go.uuid"
 )
 
 func TestPullFundsTransactionPost(t *testing.T) {
@@ -145,8 +147,12 @@ func TestPullFundsTransactionPost(t *testing.T) {
 			FeeProgramIndicator: c.feeProgramIndicator,
 		}
 
+		// Set UUID
+		newUuid := uuid.NewV4()
+		uuid := newUuid.String()
+
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
-		response, err := PullFundsTransactionsPost(request)
+		response, err := PullFundsTransactionsPost(request, uuid)
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
@@ -340,6 +346,10 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 			Request: []PullFundsTransactionRequestMultiData{requestData1, requestData2},
 		}
 
+		// Set UUID
+		newUuid := uuid.NewV4()
+		uuid := newUuid.String()
+
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		//Convert to JSON for debugging
 		reqJson, errJS := json.Marshal(request)
@@ -348,7 +358,7 @@ func TestPullFundsTransactionMultiPost(t *testing.T) {
 		}
 		fmt.Printf("%+v\n", string(reqJson))
 		//os.Exit(1)
-		response, err := MultiPullFundsTransactionsPost(request)
+		response, err := MultiPullFundsTransactionsPost(request, uuid)
 		if err != nil {
 			t.Errorf("Error when getting response: %v\n", err)
 		}
@@ -542,8 +552,12 @@ func TestPushFundsTransactionPost(t *testing.T) {
 			FeeProgramIndicator: c.feeProgramIndicator,
 		}
 
+		// Set UUID
+		newUuid := uuid.NewV4()
+		uuid := newUuid.String()
+
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
-		response, err := PushFundsTransactionsPost(request)
+		response, err := PushFundsTransactionsPost(request, uuid)
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
@@ -769,6 +783,10 @@ func TestPushFundsTransactionMultiPost(t *testing.T) {
 			Request: []PushFundsTransactionRequestMultiData{requestData1, requestData2},
 		}
 
+		// Set UUID
+		newUuid := uuid.NewV4()
+		uuid := newUuid.String()
+
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		/*
 			//Convert to JSON for debugging
@@ -779,7 +797,7 @@ func TestPushFundsTransactionMultiPost(t *testing.T) {
 			fmt.Printf("%+v\n", string(reqJson))
 			//os.Exit(1)
 		*/
-		response, err := MultiPushFundsTransactionsPost(request)
+		response, err := MultiPushFundsTransactionsPost(request, uuid)
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
@@ -961,6 +979,10 @@ func TestReverseFundsTransactionPost(t *testing.T) {
 			FeeProgramIndicator: c.feeProgramIndicator,
 		}
 
+		// Set UUID
+		newUuid := uuid.NewV4()
+		uuid := newUuid.String()
+
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
 		/*
 			//Convert to JSON for debugging
@@ -971,7 +993,7 @@ func TestReverseFundsTransactionPost(t *testing.T) {
 			fmt.Printf("%+v\n", string(reqJson))
 			//os.Exit(1)
 		*/
-		response, err := ReverseFundsTransactionsPost(request)
+		response, err := ReverseFundsTransactionsPost(request, uuid)
 		if err != nil {
 			t.Errorf("Error when getting response: %v", err)
 		}
@@ -1178,8 +1200,12 @@ func TestReverseFundsTransactionMultiPost(t *testing.T) {
 			Request:                  []ReverseFundsTransactionRequestMultiData{requestData1, requestData2},
 		}
 
+		// Set UUID
+		newUuid := uuid.NewV4()
+		uuid := newUuid.String()
+
 		setVariables(TEST_USER_KEY, TEST_USER_PASSWORD)
-		response, err := MultiReverseFundsTransactionsPost(request)
+		response, err := MultiReverseFundsTransactionsPost(request, uuid)
 		/* Convert to JSON for debugging
 		reqJson, err := json.Marshal(request)
 		if err != nil {

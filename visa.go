@@ -42,7 +42,7 @@ func getApiUrl(production bool) {
 	}
 }
 
-func Client(userId string, userPassword string, url string, reqType string, production bool, body []byte, transactionID string) (response []byte, err error) {
+func Client(userId string, userPassword string, url string, reqType string, production bool, body []byte, transactionID string, acceptType string) (response []byte, err error) {
 	setVariables(userId, userPassword)
 	authHeader := createAuthHeader()
 
@@ -51,8 +51,12 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	req.Header.Set("X-Client-Transaction-ID", transactionID)
 	req.Header.Set("Authorization:Basic ", authHeader)
 	req.Header.Set("Content-Type", "application/json")
-	//req.Header.Set("Accept", "application/json,application/octet-stream")
-	req.Header.Set("Accept", "application/json")
+	switch acceptType {
+	case "octet-stream":
+		req.Header.Set("Accept", "application/octet-stream")
+	case "json":
+		req.Header.Set("Accept", "application/json")
+	}
 
 	// Load client cert
 	cert, err := tls.LoadX509KeyPair(SSL_PUBLIC_KEY_PATH, SSL_PRIVATE_KEY_PATH)
@@ -90,7 +94,7 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	}
 
 	response, _ = ioutil.ReadAll(resp.Body)
-	//fmt.Printf("Response: %v\n", string(response))
+	fmt.Printf("Response: %v\n", string(response))
 	return response, nil
 }
 

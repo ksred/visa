@@ -90,12 +90,16 @@ func Client(userId string, userPassword string, url string, reqType string, prod
 	defer resp.Body.Close()
 
 	// HTTP 200 and 404 are not errors
-	if resp.StatusCode != 200 && resp.StatusCode != 404 {
-		response, _ = ioutil.ReadAll(resp.Body)
+	response, _ = ioutil.ReadAll(resp.Body)
+	switch resp.StatusCode {
+	case 200, 202, 404:
+		return response, nil
+		break
+	default:
 		return nil, fmt.Errorf("HTTP error: %s, %v", resp.Status, string(response))
+		break
 	}
 
-	response, _ = ioutil.ReadAll(resp.Body)
 	fmt.Printf("Response: %v\n", string(response))
 	return response, nil
 }
